@@ -72,7 +72,7 @@ module Dispander
           attachment.url,
         )
       else
-        embed.description = "[添付ファイル：#{attachment.name}](#{attachment.url})"
+        embed.description = "[添付ファイル：#{attachment.filename}](#{attachment.url})"
       end
       embed
     end
