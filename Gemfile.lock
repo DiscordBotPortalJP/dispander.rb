@@ -2,7 +2,7 @@ PATH
   remote: .
   specs:
     dispander (0.1.0)
-      discorb (~> 0.1.0)
+      discorb (~> 0.2.4)
 
 GEM
   remote: https://rubygems.org/
@@ -28,7 +28,7 @@ GEM
       protocol-websocket (~> 0.7.0)
     console (1.13.1)
       fiber-local
-    discorb (0.1.0)
+    discorb (0.2.4)
       async
       async-http
       async-websocket
@@ -55,7 +55,6 @@ PLATFORMS
   x86-mingw32
 
 DEPENDENCIES
-  discorb (~> 0.1.0)
   dispander!
   rake (~> 13.0)
 
