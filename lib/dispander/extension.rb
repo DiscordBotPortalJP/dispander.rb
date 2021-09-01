@@ -10,6 +10,10 @@ module Dispander
     Dispander.dispand(message)
   end
 
+  event :reaction_add do |event|
+    Dispander.delete_message(event)
+  end
+
   class << self
     #
     # メッセージを解析して、埋め込みを送信します。
@@ -75,6 +79,22 @@ module Dispander
         embed.description = "[添付ファイル：#{attachment.filename}](#{attachment.url})"
       end
       embed
+
+    def delete_message(event)
+      return unless event.emoji.name == "wastebasket"
+      return if event.user_id == @client.user.id
+
+      message = event.fetch_message.wait
+
+      return if message.embeds.empty?
+      return unless message.author == @client.user
+
+      _, author_id, operator_id, sent_message_ids = *message.embed.url.match(/^http:\/\/a.io\/([0-9]+)-([0-9]+)-([0-9,]+)$/)
+      return unless author_id == event.user_id || operator_id == event.user_id
+
+      sent_message_ids.split(",").each do |sent_message_id|
+        event.channel.delete_message!(sent_message_id).wait
+      end
     end
   end
 end
