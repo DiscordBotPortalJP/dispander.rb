@@ -39,7 +39,7 @@ module Dispander
           embed = create_embed_from_message(message)
           embeds << embed
           embeds += message.embeds
-          embeds += message.attachments[1..]&.filter(&:image?)&.map { |attachment| create_embed_from_attachment(attachment) }
+          embeds += message.attachments[1..]&.filter(&:image?)&.map { |attachment| create_embed_from_attachment(attachment) }.to_a
 
           until (embeds_send = embeds.slice!(..10)).empty?
             # @type [Array<Discorb::Message>]
