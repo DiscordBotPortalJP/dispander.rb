@@ -1,39 +1,67 @@
 # dispander
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/dispander`. To experiment with that code, run `bin/console` for an interactive prompt.
+discorbで出来たBotにメッセージ展開の機能を追加するExtension。
+![画像](https://user-images.githubusercontent.com/59691627/131650571-ec50bf35-c971-4aeb-9a58-8fbf9b3e759b.png)
 
-TODO: Delete this and the text above, and describe your gem
 
-## Installation
+## インストール
 
-Add this line to your application's Gemfile:
+Gemfileに以下を追記し...
 
 ```ruby
 gem 'dispander'
 ```
 
-And then execute:
+これを実行してください。
 
     $ bundle install
 
-Or install it yourself as:
+または...
 
     $ gem install dispander
 
-## Usage
+## 使い方
 
-TODO: Write usage instructions here
+### Extensionとして読み込む
 
-## Development
+```ruby
+require "discorb"
+require "dispander"
 
-After checking out the repo, run `bin/setup` to install dependencies. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
+client = Discorb::Client.new
 
-To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and the created tag, and push the `.gem` file to [rubygems.org](https://rubygems.org).
+client.once :ready do
+  puts <<~EOS
+         ---------
+         Logged in as #{client.user}(#{client.user.id})
+         ---------
+       EOS
+end
 
-## Contributing
+client.extend(Dispander)
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/dispander.
+client.run ENV["DISCORD_BOT_TOKEN"]
+```
 
-## License
+### 手動で実行する
 
-The gem is available as open source under the terms of the [MIT License](https://opensource.org/licenses/MIT).
+`Dispander.dispand`でメッセージを展開して、`Dispander.delete_message`で展開したメッセージを削除してください。
+
+```ruby
+require "discorb"
+require "dispander"
+
+client = Discorb::Client.new
+
+client.on :message do |message|
+  next if message.author.bot?
+
+  Dispander.dispand(message)
+end
+
+client.run ENV["DISCORD_BOT_TOKEN"]
+```
+
+## ライセンス
+
+[MIT License](https://opensource.org/licenses/MIT)で公開しています。
