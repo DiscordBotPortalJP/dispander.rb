@@ -94,6 +94,11 @@ module Dispander
       embed
     end
 
+    #
+    # 埋め込みを削除します。
+    #
+    # @param [Discorb::Gateway::ReactionEvent] event リアクションのイベント。
+    #
     def delete_message(event)
       return unless event.emoji.name == "wastebasket"
       return if event.user_id == @client.user.id
