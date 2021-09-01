@@ -15,6 +15,9 @@ module Dispander
   end
 
   class << self
+    # @return [Discorb::Emoji] 削除リアクションとして使う絵文字。
+    attr_accessor :delete_emoji
+
     #
     # メッセージを解析して、埋め込みを送信します。
     #
@@ -42,13 +45,12 @@ module Dispander
           embeds += message.attachments[1..]&.filter(&:image?)&.map { |attachment| create_embed_from_attachment(attachment) }.to_a
 
           until (embeds_send = embeds.slice!(..10)).empty?
-            # @type [Array<Discorb::Message>]
             sent_messages << message.channel.post(embeds: embeds_send).wait
           end
           embed.url = "http://a.io/#{base_message.author.id}-#{message.author.id}-#{sent_messages.map(&:id).join(",")}"
           first_embeds = sent_messages[0].embeds
           first_embeds[0] = embed
-          sent_messages[0].add_reaction(Discorb::UnicodeEmoji["wastebasket"])
+          sent_messages[0].add_reaction(@delete_emoji || Discorb::UnicodeEmoji["wastebasket"])
           sent_messages[0].edit(embeds: first_embeds).wait
           all_sent_messages += sent_messages
         end
@@ -100,7 +102,7 @@ module Dispander
     # @param [Discorb::Gateway::ReactionEvent] event リアクションのイベント。
     #
     def delete_message(event)
-      return unless event.emoji.name == "wastebasket"
+      return unless event.emoji != (@delete_emoji || Discorb::UnicodeEmoji["wastebasket"])
       return if event.user_id == @client.user.id
 
       message = event.fetch_message.wait

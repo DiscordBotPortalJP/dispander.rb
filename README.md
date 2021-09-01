@@ -67,6 +67,17 @@ end
 client.run ENV["DISCORD_BOT_TOKEN"]
 ```
 
+### 削除の絵文字を変更する
+
+`Dispander.delete_emoji`に絵文字を指定してください。
+
+```ruby
+Dispander.delete_emoji = Discorb::UnicodeEmoji.new("x")
+
+client.extend(Dispander)
+```
+
+
 ## ライセンス
 
 [MIT License](https://opensource.org/licenses/MIT)で公開しています。
