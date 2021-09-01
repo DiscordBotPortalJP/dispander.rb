@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    dispander (0.1.0)
+    dispander.rb (0.1.0)
       discorb (~> 0.2.4)
 
 GEM
@@ -55,7 +55,7 @@ PLATFORMS
   x86-mingw32
 
 DEPENDENCIES
-  dispander!
+  dispander.rb!
   rake (~> 13.0)
 
 BUNDLED WITH
