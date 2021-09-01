@@ -2,7 +2,7 @@ require "discorb"
 
 module Dispander
   extend Discorb::Extension
-  DISCORD_URL_PATTERN = /(?!<)https:\/\/(ptb.|canary.)?discord(app)?.com\/channels\/(?<guild>[0-9]{18})\/(?<channel>[0-9]{18})\/(?<message>[0-9]{18})(?!>)/
+  DISCORD_URL_PATTERN = /(?!<)https:\/\/(ptb.|canary.)?discord(app)?.com\/channels\/(?<guild>[0-9]{18,})\/(?<channel>[0-9]{18,})\/(?<message>[0-9]{18,})(?!>)/
 
   event :message do |message|
     next if message.author.bot?
