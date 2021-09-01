@@ -3,7 +3,7 @@
 require_relative "lib/dispander/version"
 
 Gem::Specification.new do |spec|
-  spec.name = "dispander"
+  spec.name = "dispander.rb"
   spec.version = Dispander::VERSION
   spec.authors = ["sevenc-nanashi"]
   spec.email = ["sevenc-nanashi@sevenbot.jp"]
