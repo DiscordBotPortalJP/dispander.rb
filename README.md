@@ -3,6 +3,7 @@
 discorbで出来たBotにメッセージ展開の機能を追加するExtension。
 ![画像](https://user-images.githubusercontent.com/59691627/131650571-ec50bf35-c971-4aeb-9a58-8fbf9b3e759b.png)
 
+[DiscordBotPortalJP/dispander](https://github.com/DiscordBotPortalJP/dispander) のRuby版。
 
 ## インストール
 
