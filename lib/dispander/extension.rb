@@ -1,20 +1,24 @@
 require "discorb"
 
 module Dispander
-  extend Discorb::Extension
-  DISCORD_URL_PATTERN = /(?!<)https:\/\/(ptb.|canary.)?discord(app)?.com\/channels\/(?<guild>[0-9]{18,})\/(?<channel>[0-9]{18,})\/(?<message>[0-9]{18,})(?!>)/
+  class Core < Discorb::Extension
+    @@discord_url_pattern = /(?!<)https:\/\/(ptb.|canary.)?discord(app)?.com\/channels\/(?<guild>[0-9]{18,})\/(?<channel>[0-9]{18,})\/(?<message>[0-9]{18,})(?!>)/
 
-  event :message do |message|
-    next if message.author.bot?
+    def initialize(client, delete_emoji: Discorb::UnicodeEmoji["wastebasket"])
+      @delete_emoji = delete_emoji
+      super(client)
+    end
 
-    Dispander.dispand(message)
-  end
+    event :message do |message|
+      next if message.author.bot?
 
-  event :reaction_add do |event|
-    Dispander.delete_message(event)
-  end
+      dispand(message)
+    end
 
-  class << self
+    event :reaction_add do |event|
+      delete_message(event)
+    end
+
     # @return [Discorb::Emoji] 削除リアクションとして使う絵文字。
     attr_accessor :delete_emoji
 
@@ -27,7 +31,7 @@ module Dispander
     #
     def dispand(base_message)
       all_sent_messages = []
-      base_message.content.scan(DISCORD_URL_PATTERN).each do |match|
+      base_message.content.scan(@@discord_url_pattern).each do |match|
         guild_id, channel_id, message_id = *match
         next unless base_message.guild.id == guild_id
 
@@ -50,7 +54,7 @@ module Dispander
           embed.url = "http://a.io/#{base_message.author.id}-#{message.author.id}-#{sent_messages.map(&:id).join(",")}"
           first_embeds = sent_messages[0].embeds
           first_embeds[0] = embed
-          sent_messages[0].add_reaction(@delete_emoji || Discorb::UnicodeEmoji["wastebasket"])
+          sent_messages[0].add_reaction(@delete_emoji)
           sent_messages[0].edit(embeds: first_embeds).wait
           all_sent_messages += sent_messages
         end
@@ -102,7 +106,7 @@ module Dispander
     # @param [Discorb::Gateway::ReactionEvent] event リアクションのイベント。
     #
     def delete_message(event)
-      return unless event.emoji != (@delete_emoji || Discorb::UnicodeEmoji["wastebasket"])
+      return unless event.emoji == @delete_emoji
       return if event.user_id == @client.user.id
 
       message = event.fetch_message.wait

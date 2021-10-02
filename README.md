@@ -31,22 +31,18 @@ require "dispander"
 
 client = Discorb::Client.new
 
-client.once :ready do
-  puts <<~EOS
-         ---------
-         Logged in as #{client.user}(#{client.user.id})
-         ---------
-       EOS
+client.once :standby do
+  puts "Logged in as #{client.user}"
 end
 
-client.extend(Dispander)
+client.load_extension(Dispander::Core)
 
 client.run ENV["DISCORD_BOT_TOKEN"]
 ```
 
 ### 手動で実行する
 
-`Dispander.dispand`でメッセージを展開、`Dispander.delete_message`で展開したメッセージを削除できます。
+`Dispander::Core#dispand`でメッセージを展開、`Dispander::Core#delete_message`で展開したメッセージを削除できます。
 
 ```ruby
 require "discorb"
@@ -54,14 +50,16 @@ require "dispander"
 
 client = Discorb::Client.new
 
+dispander = Dispander::Core.new(client)
+
 client.on :message do |message|
   next if message.author.bot?
 
-  Dispander.dispand(message)
+  dispander.dispand(message)
 end
 
 client.on :reaction_add do |event|
-  Dispander.delete_message(event)
+  dispander.delete_message(event)
 end
 
 client.run ENV["DISCORD_BOT_TOKEN"]
@@ -69,12 +67,10 @@ client.run ENV["DISCORD_BOT_TOKEN"]
 
 ### 削除の絵文字を変更する
 
-`Dispander.delete_emoji`に絵文字を指定してください。
+`Dispander#delete_emoji`に絵文字を指定するか、`Client#load_extension`に引数として追加してください。
 
 ```ruby
-Dispander.delete_emoji = Discorb::UnicodeEmoji.new("x")
-
-client.extend(Dispander)
+client.load_extension(Dispander::Core, delete_emoji: Discorb::UnicodeEmoji["x"])
 ```
 
 

@@ -27,26 +27,23 @@ Or...
 
 ```ruby
 require "discorb"
+require "discorb"
 require "dispander"
 
 client = Discorb::Client.new
 
-client.once :ready do
-  puts <<~EOS
-         ---------
-         Logged in as #{client.user}(#{client.user.id})
-         ---------
-       EOS
+client.once :standby do
+  puts "Logged in as #{client.user}"
 end
 
-client.extend(Dispander)
+client.load_extension(Dispander::Core)
 
 client.run ENV["DISCORD_BOT_TOKEN"]
 ```
 
 ### Expand Manually
 
-`Dispander.dispand` to expand, `Dispander.delete_message` to delete message.
+`Dispander::Core#dispand` to expand, `Dispander::Core#delete_message` to delete message.
 
 ```ruby
 require "discorb"
@@ -54,14 +51,16 @@ require "dispander"
 
 client = Discorb::Client.new
 
+dispander = Dispander::Core.new(client)
+
 client.on :message do |message|
   next if message.author.bot?
 
-  Dispander.dispand(message)
+  dispander.dispand(message)
 end
 
 client.on :reaction_add do |event|
-  Dispander.delete_message(event)
+  dispander.delete_message(event)
 end
 
 client.run ENV["DISCORD_BOT_TOKEN"]
@@ -69,12 +68,10 @@ client.run ENV["DISCORD_BOT_TOKEN"]
 
 ### Change emoji of deletion
 
-Set emoji to `Dispander.delete_emoji`
+Set emoji to `Dispander#delete_emoji`, or specify it in `Client#load_extension`.
 
 ```ruby
-Dispander.delete_emoji = Discorb::UnicodeEmoji.new("x")
-
-client.extend(Dispander)
+client.load_extension(Dispander::Core, delete_emoji: Discorb::UnicodeEmoji["x"])
 ```
 
 
