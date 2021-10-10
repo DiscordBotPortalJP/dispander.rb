@@ -1,7 +1,9 @@
 require "discorb"
 
 module Dispander
-  class Core < Discorb::Extension
+  class Core
+    include Discorb::Extension
+
     @@discord_url_pattern = /(?!<)https:\/\/(ptb.|canary.)?discord(app)?.com\/channels\/(?<guild>[0-9]{18,})\/(?<channel>[0-9]{18,})\/(?<message>[0-9]{18,})(?!>)/
 
     def initialize(client, delete_emoji: Discorb::UnicodeEmoji["wastebasket"])
