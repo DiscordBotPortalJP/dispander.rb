@@ -41,8 +41,10 @@ module Dispander
 
         sent_messages = []
         begin
-          message = @client.guilds[guild_id].channels[channel_id].fetch_message(message_id).wait
-        rescue Discorb::NotFoundError
+          next unless guild = @client.guilds[guild_id]
+          next unless channel = guild.channels[channel_id] || @client.fetch_channel(channel_id).wait
+          next unless message = channel.fetch_message(message_id).wait
+        rescue Discorb::NotFoundError, NoMethodError
           next
         else
           embed = create_embed_from_message(message)
@@ -51,7 +53,7 @@ module Dispander
           embeds += message.attachments[1..]&.filter(&:image?)&.map { |attachment| create_embed_from_attachment(attachment) }.to_a
 
           until (embeds_send = embeds.slice!(..10)).empty?
-            sent_messages << message.channel.post(embeds: embeds_send).wait
+            sent_messages << base_message.channel.post(embeds: embeds_send).wait
           end
           embed.url = "http://a.io/#{base_message.author.id}-#{message.author.id}-#{sent_messages.map(&:id).join(",")}"
           first_embeds = sent_messages[0].embeds
