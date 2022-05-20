@@ -137,7 +137,7 @@ module Dispander
     # @return [Boolean] 展開する場合は `true`、展開しない場合は `false`。
     #
     def should_expand?(base_message, ids)
-      base_message.guild.id == guild_id
+      base_message.guild.id == ids[0]
     end
   end
 end
