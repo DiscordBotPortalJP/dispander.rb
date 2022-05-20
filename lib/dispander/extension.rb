@@ -4,7 +4,7 @@ module Dispander
   class Core
     include Discorb::Extension
 
-    @@discord_url_pattern = /(?!<)https:\/\/(ptb.|canary.)?discord(app)?.com\/channels\/(?<guild>[0-9]{18,})\/(?<channel>[0-9]{18,})\/(?<message>[0-9]{18,})(?!>)/
+    @@discord_url_pattern = /(?!<)https:\/\/(ptb.|canary.)?discord(app)?.com\/channels\/(?<guild>[0-9]{17,})\/(?<channel>[0-9]{17,})\/(?<message>[0-9]{17,})(?!>)/
 
     def initialize(client, delete_emoji: Discorb::UnicodeEmoji["wastebasket"])
       @delete_emoji = delete_emoji
@@ -35,7 +35,7 @@ module Dispander
       all_sent_messages = []
       base_message.content.scan(@@discord_url_pattern).each do |match|
         guild_id, channel_id, message_id = *match
-        next unless base_message.guild.id == guild_id
+        next unless should_expand?(base_message, [guild_id, channel_id, message_id])
 
         embeds = []
 
@@ -124,6 +124,20 @@ module Dispander
       sent_message_ids.split(",").each do |sent_message_id|
         event.channel.delete_message!(sent_message_id).wait
       end
+    end
+
+    #
+    # メッセージを展開するかどうか。
+    # デフォルトでは同じサーバーのみ展開されます。
+    # このメソッドをオーバーライドすることにより、条件を変更することができます。
+    #
+    # @params [Discorb::Message] base_message 展開するメッセージ。
+    # @params [Array<String>] match 展開するメッセージのID。`[guild_id, channel_id, message_id]`
+    #
+    # @return [Boolean] 展開する場合は `true`、展開しない場合は `false`。
+    #
+    def should_expand?(base_message, ids)
+      base_message.guild.id == guild_id
     end
   end
 end
