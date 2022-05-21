@@ -74,6 +74,19 @@ Set emoji to `Dispander#delete_emoji`, or specify it in `Client#load_extension`.
 client.load_extension(Dispander::Core, delete_emoji: Discorb::UnicodeEmoji["x"])
 ```
 
+## Change the condition to expand
+
+Override `Dispander#should_expand?`.
+
+```ruby
+dispander = Dispander::Core.new(client)
+
+def dispander.should_expand?(base_message, ids)
+  ENV["ALLOWED_GUILDS"].split(",").include?(ids[0])
+end
+
+client.load_extension(dispander)
+```
 
 ## License
 

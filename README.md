@@ -1,13 +1,13 @@
 # dispander.rb
 
-discorbで出来たBotにメッセージ展開の機能を追加するExtension。
+discorb で出来た Bot にメッセージ展開の機能を追加する Extension。
 ![画像](https://user-images.githubusercontent.com/59691627/131650571-ec50bf35-c971-4aeb-9a58-8fbf9b3e759b.png)
 
-[DiscordBotPortalJP/dispander](https://github.com/DiscordBotPortalJP/dispander) のRuby版。
+[DiscordBotPortalJP/dispander](https://github.com/DiscordBotPortalJP/dispander) の Ruby 版。
 
 ## インストール
 
-Gemfileに以下を追記し...
+Gemfile に以下を追記し...
 
 ```ruby
 gem 'dispander'
@@ -23,7 +23,7 @@ gem 'dispander'
 
 ## 使い方
 
-### Extensionとして読み込む
+### Extension として読み込む
 
 ```ruby
 require "discorb"
@@ -73,6 +73,19 @@ client.run ENV["DISCORD_BOT_TOKEN"]
 client.load_extension(Dispander::Core, delete_emoji: Discorb::UnicodeEmoji["x"])
 ```
 
+### 展開条件を変更する
+
+`Dispander#should_expand?`をオーバーライドしてください。
+
+```ruby
+dispander = Dispander::Core.new(client)
+
+def dispander.should_expand?(base_message, ids)
+  ENV["ALLOWED_GUILDS"].split(",").include?(ids[0])
+end
+
+client.load_extension(dispander)
+```
 
 ## ライセンス
 
