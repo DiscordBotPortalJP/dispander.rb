@@ -122,7 +122,7 @@ module Dispander
       return unless author_id == event.user_id || operator_id == event.user_id
 
       sent_message_ids.split(",").each do |sent_message_id|
-        event.channel.delete_message!(sent_message_id).wait
+        event.channel.delete_message(sent_message_id).wait
       end
     end
 
